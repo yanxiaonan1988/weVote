@@ -1,5 +1,10 @@
+'use strict';
+
 const express = require('express');
 const fileUpload = require('express-fileupload');
+
+const voteService = require('./service/voteService');
+
 const app = express();
 const port = 3000;
 
@@ -10,15 +15,13 @@ app.get('/api', (req, res, next) => res.send('Hello World!'));
 
 
 
-app.post('/api/vote/create', (req, res, next) => {
+app.post('/api/vote/create', async (req, res, next) => {
+    let voteTitle = req.body.voteTitle;
     let voteFile = req.files.voteFile;
-    console.log(req.body.voteTitle);
-
-    voteFile.mv('data/xxx.jpg', function(err) {
-        res.redirect('/');
-    });
+    await voteService.createVote(voteTitle, voteFile);
+    res.redirect('/');
 });
 
-
-
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}!`)
+});
