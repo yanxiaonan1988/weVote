@@ -22,6 +22,17 @@ app.post('/api/vote/create', async (req, res, next) => {
     res.redirect('/');
 });
 
+app.get('/api/vote/current', (req, res, next) => {
+    res.json({
+        success: true,
+        currentVote: voteService.getCurrentVote()
+    });
+});
+
+app.get('/data/:voteID/voteFile.pdf', (req, res, next) => {
+    res.sendFile(__dirname + `/data/${req.params.voteID}/voteFile.pdf`);
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`)
 });
