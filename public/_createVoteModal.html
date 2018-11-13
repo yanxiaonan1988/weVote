@@ -1,0 +1,32 @@
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form id='createVote' action='/api/vote/create' method='post' encType="multipart/form-data">
+            <div class="form-group">
+                <input name="voteTitle" class="form-control form-control-lg" type="text" placeholder="voteTitle">
+            </div>
+            <div class="form-group">
+                <div class="input-group mb-3">
+                    <div class="custom-file">
+                        <input id="voteFile" name="voteFile" type="file" class="custom-file-input">
+                        <label class="custom-file-label" for="inputGroupFile01">选择文件</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+    </div>
+    </div>
+</div>

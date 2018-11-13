@@ -12,8 +12,10 @@
   "dependencies": {
     "express": "^4.16.4",
     "express-fileupload": "^1.0.0",
+    "md5": "^2.2.1",
     "mkdirp": "^0.5.1",
     "moment": "^2.22.2",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "uuid": "^3.3.2"
   }
 }

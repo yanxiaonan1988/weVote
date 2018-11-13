@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="row">
+        <label class='col-md-2' for="voteTitle">投票名称:</label>
+        <input type="text" class="form-control col-md-4" id="voteTitle" disabled>
+    </div>
+    
+    <div class="row">
+            <label class='col-md-2'>投票成员:</label>
+            <div id='voters'></div>
+    </div>
+    <div class="row">
+        <label class='col-md-2'>请投票:</label>
+        <button type="button" class="btn btn-success" id='decision_1' onclick="makeDecision(1)">同意</button>
+        <button type="button" class="btn btn-danger" id='decision_-1' onclick="makeDecision(-1)">反对</button>
+    </div>
+    <div class="row">
+        <label class='col-md-2' for="voteTitle">投票文件:</label>
+        <div class='col-md-10' id='voteFile'></div>    
+    </div>            
+</div>

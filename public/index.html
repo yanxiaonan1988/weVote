@@ -5,59 +5,27 @@
     <script src="/js/popper.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
   </head>
-<body>
+<body onload="initAdmin();">
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal">创建投票</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal">结束投票</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal">关闭投票</button>
+    
+    <div class="modal fade" id="createVoteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
 
-    <div class="modal fade" id="createVoteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id='createVote' action='/api/vote/create' method='post' encType="multipart/form-data">
-                    <div class="form-group">
-                        <input name="voteTitle" class="form-control form-control-lg" type="text" placeholder="voteTitle">
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="custom-file">
-                                <input id="voteFile" name="voteFile" type="file" class="custom-file-input">
-                                <label class="custom-file-label" for="inputGroupFile01">选择文件</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
-            </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- current vote view -->
-    <div id='currentVote' >
+    <div id='voter' >
         <div class="container">
             <div class="row">
-                <label class='col-md-2' for="voteTitle">投票名称:</label>
-                <input type="text" class="form-control col-md-4" id="voteTitle" disabled>
-            </div>
-            <div class="row">
-                <label class='col-md-2' for="voteTitle">投票文件:</label>
-                <div class='col-md-10' id='voteFile'></div>    
+                <input type="text" class="form-control col-md-4" id="name" placeholder='姓名'>
+                <button type="button" class="btn btn-primary" id='signIn' onclick="signIn()">签到</button>
             </div>
                 
         </div>
     </div>
+
+    <!-- current vote view -->
+    <div id='currentVote'></div>
         
 </body>
-<script src="main.js"></script>
+<script src="/main.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 </html>
