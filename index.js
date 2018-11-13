@@ -63,6 +63,14 @@ app.post('/api/vote/vote', jsonParser, (req, res, next) => {
     })
 });
 
+app.post('/api/vote/finish', (req, res, next) => {
+    voteService.finish();
+    io.emit('finish');
+    res.json({
+        success: true
+    })
+});
+
 
 
 io.on('connection', function (socket) {

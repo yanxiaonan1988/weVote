@@ -15,7 +15,7 @@ let updateCurrentVote = (currentVote) => {
         let user;
         if(localStorage.user) {user = JSON.parse(localStorage.user);}
         updateSignIn(user, currentVote.voters);
-        updateDecision(currentVote.voters[user.userId].decision);
+        if(user && currentVote.voters[user.userId]){ updateDecision(currentVote.voters[user.userId].decision); }
     }
 }
 
@@ -33,7 +33,11 @@ let updateVoters = (voters) => {
 
 let voteCreatedCallback = (currentVote) => { updateCurrentVote(currentVote); }
 let signInCallback = (voters) =>{ updateVoters(voters); }
-let DecisionCallback = (voters) =>{ updateVoters(voters); }
+let decisionCallback = (voters) =>{ updateVoters(voters); }
+let finishCallback = () => {
+    $('#currentVote').find("*").attr("disabled", "disabled");
+
+}
 
 let initCurrentVote = () => {
     $.get({
@@ -55,7 +59,10 @@ let initAdmin = () => {
         signInCallback(data);
     });
     socket.on('decision', function (data) {
-        DecisionCallback(data);
+        decisionCallback(data);
+    });
+    socket.on('finish', function (data) {
+        finishCallback(data);
     });
 }
 
@@ -103,6 +110,17 @@ let updateDecision = (decision) => {
         $('#currentVote #decision_-1').attr('disabled', 'disabled');
         $('#currentVote #decision_1').addClass('invisible');
     }
+}
+
+let finish = () => {
+    $.post({
+        url: '/api/vote/finish',
+        contentType:'application/json;charset=utf-8',
+        success: function updateData(data){
+            $('#finishVote').attr('disabled', 'disabled');
+            alert('已结束');
+        }
+    });
 }
 
 

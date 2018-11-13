@@ -6,9 +6,9 @@
     <script src="/js/bootstrap.min.js"></script>
   </head>
 <body onload="initAdmin();">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal">创建投票</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal">结束投票</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal">关闭投票</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal" id="createVote">创建投票</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" id="finishVote" onclick="finish()">结束投票</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" id="saveVote">保存投票</button>
     
     <div class="modal fade" id="createVoteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
 

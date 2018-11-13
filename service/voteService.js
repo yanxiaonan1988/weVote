@@ -19,6 +19,7 @@ exports.createVote = async (voteTitle, voteFile) => {
         currentVote.votePath = 'data/' + currentVote.voteID,
         currentVote.voteFilePath = currentVote.votePath + '/voteFile.pdf'
         currentVote.voters = {};
+        currentVote.status = 0;
 
         await mkdirp(currentVote.votePath);
         await util.promisify(voteFile.mv)(currentVote.voteFilePath);
@@ -46,6 +47,10 @@ exports.vote = (token, decision) => {
     let userId = signInMap[token];
     currentVote.voters[userId].decision = decision;
     return currentVote.voters;
+};
+
+exports.finish = () => {
+    currentVote.status = 1;
 };
 
 exports.closeVote = () => {
