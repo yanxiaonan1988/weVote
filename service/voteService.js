@@ -5,7 +5,6 @@ const mkdirp = util.promisify(require('mkdirp'));
 const uuidv4 = require('uuid/v4');
 const md5 = require('md5');
 const fs = require('fs');
-const toPdf = util.promisify(require("office-to-pdf"));
 const _ = require('lodash');
 const exec = util.promisify(require('child_process').exec);
 

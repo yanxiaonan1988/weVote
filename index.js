@@ -30,7 +30,7 @@ app.post('/api/vote/create', async (req, res, next) => {
     
     let currentVote = await voteService.createVote(voteTitle, voteDescription, meetingName, isRecorded, voteFile);
     io.emit('voteCreated', currentVote);
-    res.redirect('/');
+    res.redirect('/admin.html');
 });
 
 app.get('/api/vote/current', (req, res, next) => {

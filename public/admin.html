@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+  </head>
+<body onload="init('admin');">
+    <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+        <a class="navbar-brand" href="/admin.html">微投</a>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#createVoteModal" id="createVote">创建投票</button>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="finishVote" onclick="finishVote()">结束投票</button>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="saveVote" onclick="saveVote()">保存投票</button>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="saveVote" onclick="">查询投票</button>
+    </nav>
+    <div class="modal fade" id="createVoteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
+    
+
+    <!-- current vote view -->
+    <div id='currentVote'></div>
+        
+</body>
+<script src="/main.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+</html>

@@ -1,5 +1,23 @@
+let mode;
+
 let updateCurrentVote = (currentVote) => {
     if(currentVote){
+        
+        if(mode == 'voter'){
+            let user;
+            if(localStorage.user) {user = JSON.parse(localStorage.user);}
+            updateSignIn(user, currentVote.voters);
+            if(user && currentVote.voters[user.userId]){ updateDecision(currentVote.voters[user.userId].decision); }
+        }
+        
+        if(currentVote.status == 1){
+            if(mode == 'admin'){
+                $('#finishVote').attr('disabled', 'disabled');
+            }
+            $('#currentVote').find("*").attr("disabled", "disabled");
+            
+        }
+
         $('#currentVote #voteTitle').val(currentVote.voteTitle);
         $('#currentVote #isRecorded').val(currentVote.isRecorded == 'Y'?'记名':'不记名');
         $('#currentVote #meetingName').val(currentVote.meetingName);
@@ -7,10 +25,7 @@ let updateCurrentVote = (currentVote) => {
         $('#currentVote #voteFile').html(`</div><embed src="${currentVote.voteFilePath}" id="voteFile" height="900" width="100%"/>`);
         updateVoters(currentVote.voters);
         
-        let user;
-        if(localStorage.user) {user = JSON.parse(localStorage.user);}
-        updateSignIn(user, currentVote.voters);
-        if(user && currentVote.voters[user.userId]){ updateDecision(currentVote.voters[user.userId].decision); }
+        
     }
 }
 
@@ -26,7 +41,7 @@ let updateVoters = (voters) => {
     $('#currentVote #voters').html(votersHtml);
 }
 
-let voteCreatedCallback = (currentVote) => { updateCurrentVote(currentVote); }
+let voteCreatedCallback = (currentVote) => { location.reload(); }
 let signInCallback = (voters) =>{ updateVoters(voters); }
 let decisionCallback = (voters) =>{ updateVoters(voters); }
 let finishVoteCallback = () => {
@@ -43,10 +58,16 @@ let initCurrentVote = () => {
     });
 }
 
-let initAdmin = () => {
-    $('#currentVote').load('_currentVote.html');
-    $('#createVoteModal').load('_createVoteModal.html');
-
+let init = (_mode) => {
+    mode = _mode;
+    
+    if(mode == 'admin'){
+        $('#currentVote').load('_currentVote.html');
+        $('#createVoteModal').load('_createVoteModal.html');
+    }else{
+        $('#currentVote').load('_currentVote.html');
+    }
+    
     initCurrentVote();
 
     let socket = io.connect('http://localhost:3000');
@@ -85,6 +106,11 @@ let updateSignIn = (user, voters) => {
         $('#voter #name').attr('disabled', 'disabled');
         $('#voter #signIn').text('已签到');
         $('#voter #signIn').attr('disabled', 'disabled');
+    }else{
+        $('#voter #name').val('');
+        $('#voter #name').removeAttr('disabled');
+        $('#voter #signIn').text('签到');
+        $('#voter #signIn').removeAttr('disabled');
     }
 }
 
@@ -102,11 +128,14 @@ let makeDecision = (decision) => {
 
 let updateDecision = (decision) => {
     if(decision === 1){
-        $('#currentVote #decision_1').attr('disabled', 'disabled');
-        $('#currentVote #decision_-1').addClass('invisible');
+        $('#decision_1').attr('disabled', 'disabled');
+        $('#decision_-1').addClass('invisible');
+    }else if(decision === -1){
+        $('#decision_-1').attr('disabled', 'disabled');
+        $('#decision_1').addClass('invisible');
     }else{
-        $('#currentVote #decision_-1').attr('disabled', 'disabled');
-        $('#currentVote #decision_1').addClass('invisible');
+        $('#decision_1').removeAttr('disabled');
+        $('#decision_-1').removeAttr('disabled');
     }
 }
 
