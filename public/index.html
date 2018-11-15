@@ -6,21 +6,20 @@
     <script src="/js/bootstrap.min.js"></script>
   </head>
 <body onload="initAdmin();">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createVoteModal" id="createVote">创建投票</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" id="finishVote" onclick="finish()">结束投票</button>
-    <button type="button" class="btn btn-primary" data-toggle="modal" id="saveVote">保存投票</button>
-    
-    <div class="modal fade" id="createVoteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
-
-    <div id='voter' >
-        <div class="container">
-            <div class="row">
-                <input type="text" class="form-control col-md-4" id="name" placeholder='姓名'>
+    <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+        <a class="navbar-brand" href="/">微投</a>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#createVoteModal" id="createVote">创建投票</button>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="finishVote" onclick="finishVote()">结束投票</button>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="saveVote" onclick="saveVote()">保存投票</button>
+        <button type="button" class="btn btn-outline-primary" data-toggle="modal" id="saveVote" onclick="">查询投票</button>
+        
+        <div class="form-inline" id='voter'>
+                <input type="text" class="form-control" id="name" placeholder='姓名'>
                 <button type="button" class="btn btn-primary" id='signIn' onclick="signIn()">签到</button>
-            </div>
-                
         </div>
-    </div>
+    </nav>
+    <div class="modal fade" id="createVoteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"></div>
+    
 
     <!-- current vote view -->
     <div id='currentVote'></div>

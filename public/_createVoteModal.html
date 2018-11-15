@@ -1,7 +1,13 @@
+<script>
+$('.custom-file-input').on('change', function() { 
+    let fileName = $(this).val().split('\\').pop(); 
+    $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
+});
+</script>
 <div class="modal-dialog" role="document">
     <div class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="exampleModalLabel">创建投票</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
         </button>
@@ -9,24 +15,41 @@
     <div class="modal-body">
         <form id='createVote' action='/api/vote/create' method='post' encType="multipart/form-data">
             <div class="form-group">
-                <input name="voteTitle" class="form-control form-control-lg" type="text" placeholder="voteTitle">
+                <input name="voteTitle" class="form-control" type="text" placeholder="投票标题">
+            </div>
+            <div class="from-group">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="isRecorded" id="radio1" value="N" checked>
+                    <label class="form-check-label" for="inlineRadio1">不记名</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="isRecorded" id="radio2" value="Y">
+                    <label class="form-check-label" for="inlineRadio2">记名</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <input name="meetingName" class="form-control" type="text" placeholder="会议名称">
+            </div>
+            <div class="form-group">
+                <textarea name="voteDescription" class="form-control" type="textarea" placeholder="投票描述"></textarea>
             </div>
             <div class="form-group">
                 <div class="input-group mb-3">
                     <div class="custom-file">
-                        <input id="voteFile" name="voteFile" type="file" class="custom-file-input">
+                        <input id="voteFile" name="voteFile" type="file" class="custom-file-input" accept=".pdf,.doc,.docx">
                         <label class="custom-file-label" for="inputGroupFile01">选择文件</label>
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" id="submitCreateVote" hidden>Submit</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick='$("#submitCreateVote").click();'>创建</button>
             </div>
         </form>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-    </div>
+    
     </div>
 </div>

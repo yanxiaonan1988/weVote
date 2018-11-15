@@ -1,14 +1,9 @@
-$('#currentVote').load('_currentVote.html');
-$('#createVoteModal').load('_createVoteModal.html');
-
-$('.custom-file-input').on('change', function() { 
-    let fileName = $(this).val().split('\\').pop(); 
-    $(this).siblings('.custom-file-label').addClass('selected').html(fileName);
-});
-
 let updateCurrentVote = (currentVote) => {
     if(currentVote){
         $('#currentVote #voteTitle').val(currentVote.voteTitle);
+        $('#currentVote #isRecorded').val(currentVote.isRecorded == 'Y'?'记名':'不记名');
+        $('#currentVote #meetingName').val(currentVote.meetingName);
+        $('#currentVote #voteDescription').val(currentVote.voteDescription);
         $('#currentVote #voteFile').html(`</div><embed src="${currentVote.voteFilePath}" id="voteFile" height="900" width="100%"/>`);
         updateVoters(currentVote.voters);
         
@@ -26,7 +21,7 @@ let updateVoters = (voters) => {
         let badgeHtml = "";
         if(voter.decision === 1){badgeHtml = `<span class="badge badge-pill badge-success">√</span>`};
         if(voter.decision === -1){badgeHtml = `<span class="badge badge-pill badge-danger">×</span>`};
-        votersHtml += `<button type="button" class="btn btn-secondary">${voter.name}${badgeHtml}</button>`
+        votersHtml += `<button type="button" class="btn btn-secondary">${voter.name}${badgeHtml}</button> `
     }
     $('#currentVote #voters').html(votersHtml);
 }
@@ -34,7 +29,7 @@ let updateVoters = (voters) => {
 let voteCreatedCallback = (currentVote) => { updateCurrentVote(currentVote); }
 let signInCallback = (voters) =>{ updateVoters(voters); }
 let decisionCallback = (voters) =>{ updateVoters(voters); }
-let finishCallback = () => {
+let finishVoteCallback = () => {
     $('#currentVote').find("*").attr("disabled", "disabled");
 
 }
@@ -49,6 +44,9 @@ let initCurrentVote = () => {
 }
 
 let initAdmin = () => {
+    $('#currentVote').load('_currentVote.html');
+    $('#createVoteModal').load('_createVoteModal.html');
+
     initCurrentVote();
 
     let socket = io.connect('http://localhost:3000');
@@ -61,8 +59,8 @@ let initAdmin = () => {
     socket.on('decision', function (data) {
         decisionCallback(data);
     });
-    socket.on('finish', function (data) {
-        finishCallback(data);
+    socket.on('finishVote', function (data) {
+        finishVoteCallback(data);
     });
 }
 
@@ -112,7 +110,7 @@ let updateDecision = (decision) => {
     }
 }
 
-let finish = () => {
+let finishVote = () => {
     $.post({
         url: '/api/vote/finish',
         contentType:'application/json;charset=utf-8',
@@ -123,6 +121,16 @@ let finish = () => {
     });
 }
 
+let saveVote = () => {
+    $.post({
+        url: '/api/vote/save',
+        contentType:'application/json;charset=utf-8',
+        success: function updateData(data){
+            $('#saveVote').attr('disabled', 'disabled');
+            alert('已保存');
+        }
+    });
+}
 
 
 

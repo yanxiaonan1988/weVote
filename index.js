@@ -23,8 +23,12 @@ app.get('/api', (req, res, next) => res.send('Hello World!'));
 
 app.post('/api/vote/create', async (req, res, next) => {
     let voteTitle = req.body.voteTitle;
+    let voteDescription = req.body.voteDescription;
+    let meetingName = req.body.meetingName;
+    let isRecorded = req.body.isRecorded;
     let voteFile = req.files.voteFile;
-    let currentVote = await voteService.createVote(voteTitle, voteFile);
+    
+    let currentVote = await voteService.createVote(voteTitle, voteDescription, meetingName, isRecorded, voteFile);
     io.emit('voteCreated', currentVote);
     res.redirect('/');
 });
@@ -64,8 +68,15 @@ app.post('/api/vote/vote', jsonParser, (req, res, next) => {
 });
 
 app.post('/api/vote/finish', (req, res, next) => {
-    voteService.finish();
-    io.emit('finish');
+    voteService.finishVote();
+    io.emit('finishVote');
+    res.json({
+        success: true
+    })
+});
+
+app.post('/api/vote/save', (req, res, next) => {
+    voteService.saveVote();
     res.json({
         success: true
     })
