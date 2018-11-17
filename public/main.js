@@ -7,7 +7,12 @@ let updateCurrentVote = (currentVote) => {
             let user;
             if(localStorage.user) {user = JSON.parse(localStorage.user);}
             updateSignIn(user, currentVote.voters);
-            if(user && currentVote.voters[user.userId]){ updateDecision(currentVote.voters[user.userId].decision); }
+            if(user && currentVote.voters[user.userId]){
+                updateDecision(currentVote.voters[user.userId].decision); 
+            }else if(currentVote.isRecorded == 'N'){
+                $('#voter #name').val("匿名"+Math.floor(Math.random()*1000+1));
+                $('#voter #name').attr('disabled', 'disabled');
+            }
         }
         
         if(currentVote.status == 1){
