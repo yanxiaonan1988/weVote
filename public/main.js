@@ -75,14 +75,16 @@ let initCurrentVote = () => {
 let init = (_mode) => {
     mode = _mode;
     
-    if(mode == 'admin'){
-        $('#currentVote').load('_currentVote.html');
-        $('#createVoteModal').load('_createVoteModal.html');
-    }else{
-        $('#currentVote').load('_currentVote.html');
-    }
-    
-    initCurrentVote();
+
+    $('#currentVote').load('_currentVote.html', () => {
+        if(mode == 'admin'){
+            $('#createVoteModal').load('_createVoteModal.html', () => {
+                initCurrentVote();
+            });
+        }else{
+            initCurrentVote();
+        }
+    });
 
     let socket = io.connect('http://localhost:3000');
     socket.on('voteCreated', function (data) {
