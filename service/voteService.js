@@ -25,7 +25,7 @@ exports.createVote = async (voteTitle, voteDescription, meetingName, isRecorded,
         currentVote.voteFilePath = currentVote.votePath + '/voteFile.pdf'
         currentVote.voters = {};
         currentVote.status = 0;
-        currentVote.notice = {support: 0, oppose: 0};
+        currentVote.notice = {all: 0, support: 0, oppose: 0};
 
         await mkdirp(currentVote.votePath);
 
@@ -59,7 +59,8 @@ exports.signIn = (name) => {
     signInMap[token] = userId;
     let user = {userId, name};
     currentVote.voters[userId] = user;
-    return {token, user, voters: currentVote.voters};
+    currentVote.notice.all += 1;
+    return {token, user, voters: currentVote.voters, notice: currentVote.notice};
 };
 
 exports.vote = (token, decision) => {
@@ -67,7 +68,7 @@ exports.vote = (token, decision) => {
     currentVote.voters[userId].decision = decision;
     if(decision === 1){ currentVote.notice.support += 1; }
     if(decision === -1){ currentVote.notice.oppose += 1; }
-    return currentVote.voters;
+    return {voters: currentVote.voters, notice: currentVote.notice};
 };
 
 exports.finishVote = () => {

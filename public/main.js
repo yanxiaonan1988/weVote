@@ -25,7 +25,7 @@ let updateCurrentVote = (currentVote) => {
         $('#currentVote #voteFile').html(`</div><embed src="${currentVote.voteFilePath}" id="voteFile" height="900" width="100%"/>`);
         updateVoters(currentVote.voters);
         
-        
+        updateVoteProgress(currentVote.notice);
     }
 }
 
@@ -41,9 +41,18 @@ let updateVoters = (voters) => {
     $('#currentVote #voters').html(votersHtml);
 }
 
+let updateVoteProgress = (notice) => {
+    if(notice.all != 0){
+        $("#voteProgress #support").css('width', notice.support/notice.all*100+"%");
+        $("#voteProgress #support").text(notice.support);
+        $("#voteProgress #oppose").css('width', notice.oppose/notice.all*100+"%");
+        $("#voteProgress #oppose").text(notice.oppose);
+    }
+}
+
 let voteCreatedCallback = (currentVote) => { location.reload(); }
-let signInCallback = (voters) =>{ updateVoters(voters); }
-let decisionCallback = (voters) =>{ updateVoters(voters); }
+let signInCallback = (voters, notice) =>{ updateVoters(voters); updateVoteProgress(notice); }
+let decisionCallback = (voters, notice) =>{ updateVoters(voters); updateVoteProgress(notice); }
 let finishVoteCallback = () => {
     $('#currentVote').find("*").attr("disabled", "disabled");
 
@@ -75,10 +84,10 @@ let init = (_mode) => {
         voteCreatedCallback(data);
     });
     socket.on('signIn', function (data) {
-        signInCallback(data);
+        signInCallback(data.voters, data.notice);
     });
     socket.on('decision', function (data) {
-        decisionCallback(data);
+        decisionCallback(data.voters, data.notice);
     });
     socket.on('finishVote', function (data) {
         finishVoteCallback(data);
@@ -97,6 +106,7 @@ let signIn = () => {
             localStorage.token = data.token;
             localStorage.user = JSON.stringify(data.user);
             updateSignIn(data.user, data.voters);
+            updateDecision(undefined);
         }
     });
 }

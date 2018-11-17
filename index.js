@@ -47,7 +47,7 @@ app.get('/data/:voteID/voteFile.pdf', (req, res, next) => {
 app.post('/api/vote/signIn', jsonParser, (req, res, next) => {
     let name = req.body.name;
     let result = voteService.signIn(name);
-    io.emit('signIn', result.voters);
+    io.emit('signIn', result);
     res.json({
         success: true,
         token: result.token,
@@ -59,11 +59,11 @@ app.post('/api/vote/signIn', jsonParser, (req, res, next) => {
 app.post('/api/vote/vote', jsonParser, (req, res, next) => {
     let token = req.body.token;
     let decision = req.body.decision;
-    let voters = voteService.vote(token, decision);
-    io.emit('decision', voters)
+    let result = voteService.vote(token, decision);
+    io.emit('decision', result);
     res.json({
         success: true,
-        voters: voters
+        voters: result.voters
     })
 });
 
