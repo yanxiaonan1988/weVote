@@ -27,7 +27,15 @@ let updateCurrentVote = (currentVote) => {
         $('#currentVote #isRecorded').val(currentVote.isRecorded == 'Y'?'记名':'不记名');
         $('#currentVote #meetingName').val(currentVote.meetingName);
         $('#currentVote #voteDescription').val(currentVote.voteDescription);
-        $('#currentVote #voteFile').html(`</div><embed src="${currentVote.voteFilePath}" id="voteFile" height="900" width="100%"/>`);
+        if(mode == 'admin'){
+            $('#currentVote #voteFile').html(`</div><embed src="${currentVote.voteFilePath}" id="voteFile" height="900" width="100%"/>`);
+        }else{
+            for(let i=0; i<currentVote.voteFilePathList.length; i++){
+                $('#currentVote #voteFile').append(`<img src="${currentVote.voteFilePathList[i]}" width="100%" border="1px"></img>`);
+            }
+        }
+        
+        
         updateVoters(currentVote.voters);
         
         updateVoteProgress(currentVote.notice);

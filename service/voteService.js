@@ -21,8 +21,9 @@ exports.createVote = async (voteTitle, voteDescription, meetingName, isRecorded,
         currentVote.voteDescription = voteDescription;
         currentVote.meetingName = meetingName;
         currentVote.isRecorded = isRecorded;
-        currentVote.votePath = 'data/' + currentVote.voteID,
-        currentVote.voteFilePath = currentVote.votePath + '/voteFile.pdf'
+        currentVote.votePath = 'data/' + currentVote.voteID;
+        currentVote.voteFilePath = currentVote.votePath + '/voteFile.pdf';
+        currentVote.voteFilePathList = [];
         currentVote.voters = {};
         currentVote.status = 0;
         currentVote.notice = {all: 0, support: 0, oppose: 0};
@@ -38,9 +39,16 @@ exports.createVote = async (voteTitle, voteDescription, meetingName, isRecorded,
         }else{
             await util.promisify(voteFile.mv)(currentVote.voteFilePath);
         }
+        await exec(`convert -density 300  -quality 100 ${currentVote.voteFilePath} ${currentVote.votePath}/voteFile.jpg`);
 
-        
-        
+        for(let i = 0; ; i++){
+            let tempFile = `${currentVote.votePath}/voteFile-${i}.jpg`;
+            if(fs.existsSync(tempFile)){
+                currentVote.voteFilePathList.push(`${currentVote.votePath}/${i}/voteFile.jpg`)
+            }else{
+                break;
+            }
+        }
 
         return currentVote;
     }catch(err){

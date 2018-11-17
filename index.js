@@ -44,6 +44,10 @@ app.get('/data/:voteID/voteFile.pdf', (req, res, next) => {
     res.sendFile(__dirname + `/data/${req.params.voteID}/voteFile.pdf`);
 });
 
+app.get('/data/:voteID/:index/voteFile.jpg', (req, res, next) => {
+    res.sendFile(__dirname + `/data/${req.params.voteID}/voteFile-${req.params.index}.jpg`);
+});
+
 app.post('/api/vote/signIn', jsonParser, (req, res, next) => {
     let name = req.body.name;
     let result = voteService.signIn(name);
