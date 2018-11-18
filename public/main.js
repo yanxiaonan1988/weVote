@@ -1,6 +1,8 @@
 let mode;
+let votes;
 
 let updateCurrentVote = (currentVote) => {
+    $('#currentVote').removeClass('invisible');
     if(currentVote){
         
         if(mode == 'voter'){
@@ -55,12 +57,10 @@ let updateVoters = (voters) => {
 }
 
 let updateVoteProgress = (notice) => {
-    if(notice.all != 0){
-        $("#voteProgress #support").css('width', notice.support/notice.all*100+"%");
-        $("#voteProgress #support").text(notice.support);
-        $("#voteProgress #oppose").css('width', notice.oppose/notice.all*100+"%");
-        $("#voteProgress #oppose").text(notice.oppose);
-    }
+    $("#voteProgress #support").css('width', (notice.all==0?0:notice.support/notice.all*100)+"%");
+    $("#voteProgress #support").text(notice.support);
+    $("#voteProgress #oppose").css('width', (notice.all==0?0:notice.oppose/notice.all*100)+"%");
+    $("#voteProgress #oppose").text(notice.oppose);
 }
 
 let voteCreatedCallback = (currentVote) => { location.reload(); }
@@ -82,11 +82,13 @@ let initCurrentVote = () => {
 
 let init = (_mode) => {
     mode = _mode;
-    
 
     $('#currentVote').load('_currentVote.html', () => {
         if(mode == 'admin'){
             $('#createVoteModal').load('_createVoteModal.html', () => {
+                $('#searchText').on('input', () => {
+                    $('#searchButton').text($('#searchText').val() == ''?'显示全部':'立即搜索');
+                });
                 initCurrentVote();
             });
         }else{
@@ -186,6 +188,54 @@ let saveVote = () => {
     });
 }
 
+let search = () => {
+
+    $.post({
+        url: '/api/vote/search',
+        contentType:'application/json;charset=utf-8',
+        data: JSON.stringify({searchText: $('#searchText').val() }),
+        success: function updateData(data){
+            votes = data.votes;
+            $('#currentVote').addClass('invisible');
+            updateVotesTable();
+        }
+    });
+    
+}
+
+let updateVotesTable = () => {
+    let votesTableHtml =
+    `<table class="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">投票ID</th>
+                <th scope="col">投票名称</th>
+                <th scope="col">投票类型</th>
+                <th scope="col">会议名称</th>
+                <th scope="col">投票描述</th>
+            </tr>
+        </thead>
+        <tbody>`;
+    for(let i = 0; i < votes.length; i++){
+        let vote = votes[i];
+        votesTableHtml +=
+        `<tr>
+            <th scope="row"><a href="#" onclick="displayVote(${i})">${vote.voteID}</a></th>
+            <td>${vote.voteTitle}</td>
+            <td>${vote.isRecorded == 'Y'?'记名':'不记名'}</td>
+            <td>${vote.meetingName}</td>
+            <td>${vote.voteDescription}</td>
+        </tr>`;
+    }
+    votesTableHtml += `</tbody></table>`;
+    $('#votesTable').html(votesTableHtml);
+
+}
+
+let displayVote = (index) => {
+    let vote = votes[index];
+    updateCurrentVote(vote);
+}
 
 
     

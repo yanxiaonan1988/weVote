@@ -91,3 +91,19 @@ exports.closeVote = () => {
     currentVote = undefined;
     signInMap = undefined;
 };
+
+exports.search = (searchText) => {
+    let votes = [];
+    let dirs = fs.readdirSync('data/');
+    for(let i = 0; i < dirs.length; i++){
+        let dir = dirs[i];
+        if(fs.existsSync(`data/${dir}/vote.json`)){
+            let voteText = fs.readFileSync(`data/${dir}/vote.json`);
+            let reg = new RegExp(`${searchText}`);
+            if(searchText == "" || reg.test(voteText)){
+                votes.push(JSON.parse(voteText));
+            }
+        }
+    }
+    return votes;
+};

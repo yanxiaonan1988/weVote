@@ -86,7 +86,13 @@ app.post('/api/vote/save', (req, res, next) => {
     })
 });
 
-
+app.post('/api/vote/search', jsonParser, (req, res, next) => {
+    let votes = voteService.search(req.body.searchText);
+    res.json({
+        success: true,
+        votes: votes
+    });
+});
 
 io.on('connection', function (socket) {
     // socket.on('signIn', function (data) {
