@@ -79,6 +79,14 @@ app.post('/api/vote/finish', (req, res, next) => {
     })
 });
 
+app.post('/api/vote/close', (req, res, next) => {
+    voteService.closeVote();
+    io.emit('closeVote');
+    res.json({
+        success: true
+    })
+});
+
 app.post('/api/vote/save', (req, res, next) => {
     voteService.saveVote();
     res.json({

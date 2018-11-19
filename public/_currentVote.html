@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" id='currentVote'>
     <br>
     <div class="row">
         <label class='col-md-2' for="voteTitle">投票名称:</label>
@@ -16,16 +16,19 @@
         <label class='col-md-2' for="voteDescription">投票描述:</label>
         <textarea type="text" class="form-control col-md-4" id="voteDescription" disabled></textarea>
     </div><br>
-    <div class="row">
-            <label class='col-md-2'>投票成员:</label>
-            <div id='voters'></div>
-    </div><br>
-    <div id="voteProgress" class="progress" style="height: 25px;">
-        <div id="support" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
-        <div id="oppose" class="progress-bar bg-danger" role="progressbar" style="width: 0%"></div>
-    </div><br>
+    <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading" id='notice-all'></h4>
+        <div id='voters'></div>
+        <hr>
+        <div id="voteProgress" class="progress" style="height: 25px;">
+            <div id="support" class="progress-bar bg-success" role="progressbar" style="width: 0%"></div>
+            <div id="oppose" class="progress-bar bg-danger" role="progressbar" style="width: 0%"></div>
+        </div><br>    
+    </div>
+    
     <div class="row">
         <!-- <label class='col-md-2' for="voteTitle">投票文件:</label> -->
         <div class='col-md-12' id='voteFile'></div>    
     </div>
+
 </div>

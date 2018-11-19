@@ -2,45 +2,49 @@ let mode;
 let votes;
 
 let updateCurrentVote = (currentVote) => {
-    $('#currentVote').removeClass('invisible');
+    
     if(currentVote){
-        
-        if(mode == 'voter'){
-            let user;
-            if(localStorage.user) {user = JSON.parse(localStorage.user);}
-            updateSignIn(user, currentVote.voters);
-            if(user && currentVote.voters[user.userId]){
-                updateDecision(currentVote.voters[user.userId].decision); 
-            }else if(currentVote.isRecorded == 'N'){
-                $('#voter #name').val("匿名"+Math.floor(Math.random()*1000+1));
-                $('#voter #name').attr('disabled', 'disabled');
+        $('#currentVotePanel').load('_currentVote.html', () =>{
+            $('#saveVote').removeAttr('disabled');
+            $('#currentVote').removeClass('invisible');
+            $('#currentVoteNotice').addClass('invisible');
+            if(mode == 'voter'){
+                let user;
+                if(localStorage.user) {user = JSON.parse(localStorage.user);}
+                updateSignIn(user, currentVote.voters);
+                if(user && currentVote.voters[user.userId]){
+                    updateDecision(currentVote.voters[user.userId].decision); 
+                }else if(currentVote.isRecorded == 'N'){
+                    $('#voter #name').val("匿名"+Math.floor(Math.random()*1000+1));
+                    $('#voter #name').attr('disabled', 'disabled');
+                }
             }
-        }
-        
-        if(currentVote.status == 1){
-            if(mode == 'admin'){
-                $('#finishVote').attr('disabled', 'disabled');
-            }
-            $('#currentVote').find("*").attr("disabled", "disabled");
             
-        }
-
-        $('#currentVote #voteTitle').val(currentVote.voteTitle);
-        $('#currentVote #isRecorded').val(currentVote.isRecorded == 'Y'?'记名':'不记名');
-        $('#currentVote #meetingName').val(currentVote.meetingName);
-        $('#currentVote #voteDescription').val(currentVote.voteDescription);
-        if(mode == 'admin'){
-            $('#currentVote #voteFile').html(`</div><embed src="${currentVote.voteFilePath}" id="voteFile" height="900" width="100%"/>`);
-        }else{
-            for(let i=0; i<currentVote.voteFilePathList.length; i++){
-                $('#currentVote #voteFile').append(`<img src="${currentVote.voteFilePathList[i]}" width="100%" border="1px"></img>`);
+            if(currentVote.status == 1){
+                if(mode == 'admin'){
+                    $('#finishVote').attr('disabled', 'disabled');
+                }
+                $('#currentVote').find("*").attr("disabled", "disabled");
+                
             }
-        }
-        
-        
-        updateVoters(currentVote.voters);
-        
-        updateVoteProgress(currentVote.notice);
+
+            $('#currentVote #voteTitle').val(currentVote.voteTitle);
+            $('#currentVote #isRecorded').val(currentVote.isRecorded == 'Y'?'记名':'不记名');
+            $('#currentVote #meetingName').val(currentVote.meetingName);
+            $('#currentVote #voteDescription').val(currentVote.voteDescription);
+            if(mode == 'admin'){
+                $('#currentVote #voteFile').html(`</div><embed src="${currentVote.voteFilePath}" id="voteFile" height="900" width="100%"/>`);
+            }else{
+                for(let i=0; i<currentVote.voteFilePathList.length; i++){
+                    $('#currentVote #voteFile').append(`<img src="${currentVote.voteFilePathList[i]}" width="100%" border="1px"></img>`);
+                }
+            }
+            updateVoters(currentVote.voters);   
+            updateVoteProgress(currentVote.notice);
+        });
+    }else{
+        $('#saveVote').attr('disabled', 'disabled');
+        $('#currentVotePanel').load('_currentVoteNotice.html');
     }
 }
 
@@ -51,16 +55,17 @@ let updateVoters = (voters) => {
         let badgeHtml = "";
         if(voter.decision === 1){badgeHtml = `<span class="badge badge-pill badge-success">√</span>`};
         if(voter.decision === -1){badgeHtml = `<span class="badge badge-pill badge-danger">×</span>`};
-        votersHtml += `<button type="button" class="btn btn-secondary">${voter.name}${badgeHtml}</button> `
+        votersHtml += `<button type="button" class="btn btn-outline-secondary">${voter.name} ${badgeHtml}</button> `
     }
     $('#currentVote #voters').html(votersHtml);
 }
 
 let updateVoteProgress = (notice) => {
+    $('#notice-all').html(`<button type="button" class="btn btn-lg btn-outline-info">总签到人数<span class="badge badge-pill badge-success">${notice.all}</span></button>`)
     $("#voteProgress #support").css('width', (notice.all==0?0:notice.support/notice.all*100)+"%");
-    $("#voteProgress #support").text(notice.support);
+    $("#voteProgress #support").text(notice.support==0?'':'赞成:'+notice.support);
     $("#voteProgress #oppose").css('width', (notice.all==0?0:notice.oppose/notice.all*100)+"%");
-    $("#voteProgress #oppose").text(notice.oppose);
+    $("#voteProgress #oppose").text(notice.oppose==0?'':'反对'+notice.oppose);
 }
 
 let voteCreatedCallback = (currentVote) => { location.reload(); }
@@ -68,8 +73,8 @@ let signInCallback = (voters, notice) =>{ updateVoters(voters); updateVoteProgre
 let decisionCallback = (voters, notice) =>{ updateVoters(voters); updateVoteProgress(notice); }
 let finishVoteCallback = () => {
     $('#currentVote').find("*").attr("disabled", "disabled");
-
 }
+let closeVoteCallback = () => { updateCurrentVote(undefined); }
 
 let initCurrentVote = () => {
     $.get({
@@ -82,36 +87,22 @@ let initCurrentVote = () => {
 
 let init = (_mode) => {
     mode = _mode;
-
-    $('#currentVote').load('_currentVote.html', () => {
-        if(mode == 'admin'){
-            $('#createVoteModal').load('_createVoteModal.html', () => {
-                $('#searchText').on('input', () => {
-                    $('#searchButton').text($('#searchText').val() == ''?'显示全部':'立即搜索');
-                });
-                initCurrentVote();
+    if(mode == 'admin'){
+        $('#createVoteModal').load('_createVoteModal.html', () => {
+            $('#searchText').on('input', () => {
+                $('#searchButton').text($('#searchText').val() == ''?'显示全部':'立即搜索');
             });
-        }else{
             initCurrentVote();
-        }
-    });
+        });
+    }else{ initCurrentVote(); }
 
     let socket = io.connect('http://localhost:3000');
-    socket.on('voteCreated', function (data) {
-        voteCreatedCallback(data);
-    });
-    socket.on('signIn', function (data) {
-        signInCallback(data.voters, data.notice);
-    });
-    socket.on('decision', function (data) {
-        decisionCallback(data.voters, data.notice);
-    });
-    socket.on('finishVote', function (data) {
-        finishVoteCallback(data);
-    });
+    socket.on('voteCreated', function (data) { voteCreatedCallback(data); });
+    socket.on('signIn', function (data) { signInCallback(data.voters, data.notice); });
+    socket.on('decision', function (data) { decisionCallback(data.voters, data.notice); });
+    socket.on('finishVote', function (data) { finishVoteCallback(data); });
+    socket.on('closeVote', function (data) { closeVoteCallback(data); });
 }
-
-
 
 let signIn = () => {
     let name = $('#voter #name').val();
@@ -188,6 +179,16 @@ let saveVote = () => {
     });
 }
 
+let closeVote = () => {
+    $.post({
+        url: '/api/vote/close',
+        contentType:'application/json;charset=utf-8',
+        success: function updateData(data){
+            alert('已关闭');
+        }
+    });
+}
+
 let search = () => {
 
     $.post({
@@ -197,6 +198,9 @@ let search = () => {
         success: function updateData(data){
             votes = data.votes;
             $('#currentVote').addClass('invisible');
+            $('#currentVoteNotice').addClass('invisible');
+            $('#searchText').val("");
+            $('#searchButton').text('显示全部');
             updateVotesTable();
         }
     });
