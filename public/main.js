@@ -184,7 +184,7 @@ let closeVote = () => {
         url: '/api/vote/close',
         contentType:'application/json;charset=utf-8',
         success: function updateData(data){
-            alert('已关闭');
+            alert(data.msg);
         }
     });
 }

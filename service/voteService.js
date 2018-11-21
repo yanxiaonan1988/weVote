@@ -88,6 +88,16 @@ exports.saveVote = async () => {
 }
 
 exports.closeVote = () => {
+    if(currentVote){
+        if(fs.existsSync(currentVote.votePath + '/vote.json')){
+            let savedVote = JSON.parse(fs.readFileSync(currentVote.votePath + '/vote.json'));
+            if(!_.isEqual(currentVote, savedVote)){
+                throw new Error('尚未保存当前投票变动!');
+            }
+        }else{
+            throw new Error('尚未保存当前投票变动!');
+        }
+    }
     currentVote = undefined;
     signInMap = undefined;
 };

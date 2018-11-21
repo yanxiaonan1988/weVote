@@ -80,11 +80,20 @@ app.post('/api/vote/finish', (req, res, next) => {
 });
 
 app.post('/api/vote/close', (req, res, next) => {
-    voteService.closeVote();
-    io.emit('closeVote');
-    res.json({
-        success: true
-    })
+    try{
+        voteService.closeVote();
+        io.emit('closeVote');
+        res.json({
+            success: true,
+            msg: '已关闭'
+        });
+    }catch(e){
+        res.json({
+            success: false,
+            msg: e.message
+        });
+    }
+    
 });
 
 app.post('/api/vote/save', (req, res, next) => {
