@@ -75,7 +75,8 @@ app.post('/api/vote/finish', (req, res, next) => {
     voteService.finishVote();
     io.emit('finishVote');
     res.json({
-        success: true
+        success: true,
+        msg: '本次投票成功结束'
     })
 });
 
@@ -85,7 +86,7 @@ app.post('/api/vote/close', (req, res, next) => {
         io.emit('closeVote');
         res.json({
             success: true,
-            msg: '已关闭'
+            msg: '本次投票成功关闭，可以创建其他投票'
         });
     }catch(e){
         res.json({
@@ -99,7 +100,8 @@ app.post('/api/vote/close', (req, res, next) => {
 app.post('/api/vote/save', (req, res, next) => {
     voteService.saveVote();
     res.json({
-        success: true
+        success: true,
+        msg: '投票状态成功保存'
     })
 });
 

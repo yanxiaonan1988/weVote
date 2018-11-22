@@ -11,7 +11,7 @@ let updateCurrentVote = (currentVote) => {
             if(mode == 'voter'){
                 let user;
                 if(localStorage.user) {user = JSON.parse(localStorage.user);}
-                updateSignIn(user, currentVote.voters);
+                updateSignIn(user, currentVote.voters, currentVote.status);
                 if(user && currentVote.voters[user.userId]){
                     updateDecision(currentVote.voters[user.userId].decision); 
                 }else if(currentVote.isRecorded == 'N'){
@@ -87,16 +87,17 @@ let initCurrentVote = () => {
 
 let init = (_mode) => {
     mode = _mode;
+    $('#alertPanel').load('_commonAlert.html', () => {
+         $('#commonAlert').hide(); 
+        });
     if(mode == 'admin'){
         $('#createVoteModal').load('_createVoteModal.html', () => {
-            $('#searchText').on('input', () => {
-                $('#searchButton').text($('#searchText').val() == ''?'显示全部':'立即搜索');
-            });
+            $('#searchText').on('input', () => { $('#searchButton').text($('#searchText').val() == ''?'显示全部':'立即搜索'); });
             initCurrentVote();
         });
     }else{ initCurrentVote(); }
 
-    let socket = io.connect('http://localhost:3000');
+    let socket = io.connect(`http://${location.host}`);
     socket.on('voteCreated', function (data) { voteCreatedCallback(data); });
     socket.on('signIn', function (data) { signInCallback(data.voters, data.notice); });
     socket.on('decision', function (data) { decisionCallback(data.voters, data.notice); });
@@ -118,7 +119,7 @@ let signIn = () => {
         }
     });
 }
-let updateSignIn = (user, voters) => {
+let updateSignIn = (user, voters, status) => {
     if(user && voters && voters[user.userId] ){
         $('#voter #name').val(user.name);
         $('#voter #name').attr('disabled', 'disabled');
@@ -129,6 +130,10 @@ let updateSignIn = (user, voters) => {
         $('#voter #name').removeAttr('disabled');
         $('#voter #signIn').text('签到');
         $('#voter #signIn').removeAttr('disabled');
+    }
+    if(status == 1){
+        $('#voter #name').attr('disabled', 'disabled');
+        $('#voter #signIn').attr('disabled', 'disabled');
     }
 }
 
@@ -163,7 +168,7 @@ let finishVote = () => {
         contentType:'application/json;charset=utf-8',
         success: function updateData(data){
             $('#finishVote').attr('disabled', 'disabled');
-            alert('已结束');
+            commonAlert(data.success, data.msg);
         }
     });
 }
@@ -173,8 +178,8 @@ let saveVote = () => {
         url: '/api/vote/save',
         contentType:'application/json;charset=utf-8',
         success: function updateData(data){
-            $('#saveVote').attr('disabled', 'disabled');
-            alert('已保存');
+            // $('#saveVote').attr('disabled', 'disabled');
+            commonAlert(data.success, data.msg);
         }
     });
 }
@@ -184,7 +189,7 @@ let closeVote = () => {
         url: '/api/vote/close',
         contentType:'application/json;charset=utf-8',
         success: function updateData(data){
-            alert(data.msg);
+            commonAlert(data.success, data.msg);
         }
     });
 }
@@ -239,6 +244,21 @@ let updateVotesTable = () => {
 let displayVote = (index) => {
     let vote = votes[index];
     updateCurrentVote(vote);
+}
+
+let commonAlert = (success, message) => {
+    if(success){
+        $('#commonAlert #alertTitle').text('通知');
+        $('#commonAlert #alertText').text(message);
+        $('#commonAlert').removeClass('alert-danger');
+        $('#commonAlert').addClass('alert-success');
+    }else{
+        $('#commonAlert #alertTitle').text('错误');
+        $('#commonAlert #alertText').text(message);
+        $('#commonAlert').removeClass('alert-success');
+        $('#commonAlert').addClass('alert-danger');
+    }
+    $('#commonAlert').show();
 }
 
 

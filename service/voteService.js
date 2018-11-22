@@ -39,7 +39,7 @@ exports.createVote = async (voteTitle, voteDescription, meetingName, isRecorded,
         }else{
             await util.promisify(voteFile.mv)(currentVote.voteFilePath);
         }
-        await exec(`convert -density 300  -quality 100 ${currentVote.voteFilePath} ${currentVote.votePath}/voteFile.jpg`);
+        await exec(`convert -density 150  -quality 100 ${currentVote.voteFilePath} ${currentVote.votePath}/voteFile.jpg`);
 
         for(let i = 0; ; i++){
             let tempFile = `${currentVote.votePath}/voteFile-${i}.jpg`;
