@@ -11,6 +11,29 @@ const exec = util.promisify(require('child_process').exec);
 let currentVote = undefined;
 let signInMap = undefined;
 
+let getSecretVoters = () => {
+    let secretVoters = _.cloneDeep(currentVote.voters);
+    for(let userId in secretVoters){
+        if(secretVoters[userId].decision){ secretVoters[userId].decision = '*' };
+    }
+    return secretVoters;
+}
+
+let getSecretNotice = () => {
+    let secretNotice = _.cloneDeep(currentVote.notice);
+    secretNotice.voted = secretNotice.support + secretNotice.oppose;
+    secretNotice.support = '*';
+    secretNotice.oppose = '*';
+    return secretNotice;
+}
+let getSecretCurrentVote = () => {
+    let secretCurrentVote = _.cloneDeep(currentVote);
+    secretCurrentVote.voters = getSecretVoters();
+    secretCurrentVote.notice = getSecretNotice();
+    return secretCurrentVote;
+}
+
+
 exports.createVote = async (voteTitle, voteDescription, meetingName, isRecorded, voteFile) => {
     try{
         currentVote = {};
@@ -62,6 +85,9 @@ exports.createVote = async (voteTitle, voteDescription, meetingName, isRecorded,
 };
 
 exports.getCurrentVote = () => {
+    if(currentVote && currentVote.status == 0){
+        return getSecretCurrentVote();
+    }
     return currentVote;
 };
 
@@ -72,7 +98,7 @@ exports.signIn = (name) => {
     let user = {userId, name};
     currentVote.voters[userId] = user;
     currentVote.notice.all += 1;
-    return {token, user, voters: currentVote.voters, notice: currentVote.notice};
+    return { token, user, voters: getSecretVoters(), notice: getSecretNotice() };
 };
 
 exports.vote = (token, decision) => {
@@ -80,7 +106,7 @@ exports.vote = (token, decision) => {
     currentVote.voters[userId].decision = decision;
     if(decision === 1){ currentVote.notice.support += 1; }
     if(decision === -1){ currentVote.notice.oppose += 1; }
-    return {voters: currentVote.voters, notice: currentVote.notice};
+    return { voters: getSecretVoters(), notice: getSecretNotice() };
 };
 
 exports.finishVote = () => {

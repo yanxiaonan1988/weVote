@@ -14,7 +14,7 @@ let updateCurrentVote = (currentVote) => {
                 if(localStorage.user) {user = JSON.parse(localStorage.user);}
                 updateSignIn(user, currentVote.voters, currentVote.status);
                 if(user && currentVote.voters[user.userId]){
-                    updateDecision(currentVote.voters[user.userId].decision); 
+                    updateDecision(currentVote.voters[user.userId].decision, currentVote.status); 
                 }else if(currentVote.isRecorded == 'N'){
                     $('#voter #name').val("匿名"+Math.floor(Math.random()*1000+1));
                     $('#voter #name').attr('disabled', 'disabled');
@@ -56,6 +56,7 @@ let updateVoters = (voters) => {
         let badgeHtml = "";
         if(voter.decision === 1){badgeHtml = `<span class="badge badge-pill badge-success">√</span>`};
         if(voter.decision === -1){badgeHtml = `<span class="badge badge-pill badge-danger">×</span>`};
+        if(voter.decision === '*'){badgeHtml = `<span class="badge badge-pill badge-warning">?</span>`};
         votersHtml += `<button type="button" class="btn btn-outline-secondary">${voter.name} ${badgeHtml}</button> `
     }
     $('#currentVote #voters').html(votersHtml);
@@ -63,17 +64,23 @@ let updateVoters = (voters) => {
 
 let updateVoteProgress = (notice) => {
     $('#notice-all').html(`<button type="button" class="btn btn-lg btn-outline-info">总签到人数<span class="badge badge-pill badge-success">${notice.all}</span></button>`)
-    $("#voteProgress #support").css('width', (notice.all==0?0:notice.support/notice.all*100)+"%");
-    $("#voteProgress #support").text(notice.support==0?'':'赞成:'+notice.support);
-    $("#voteProgress #oppose").css('width', (notice.all==0?0:notice.oppose/notice.all*100)+"%");
-    $("#voteProgress #oppose").text(notice.oppose==0?'':'反对'+notice.oppose);
+    if(notice.voted !== undefined){
+        $("#voteProgress #voted").css('width', (notice.all==0?0:notice.voted/notice.all*100)+"%");
+        $("#voteProgress #voted").text(notice.voted==0?'':'已投票:'+notice.voted);
+    }else{
+        $("#voteProgress #support").css('width', (notice.all==0?0:notice.support/notice.all*100)+"%");
+        $("#voteProgress #support").text(notice.support==0?'':'赞成:'+notice.support);
+        $("#voteProgress #oppose").css('width', (notice.all==0?0:notice.oppose/notice.all*100)+"%");
+        $("#voteProgress #oppose").text(notice.oppose==0?'':'反对'+notice.oppose);
+    }
+    
 }
 
 let voteCreatedCallback = (currentVote) => { location.reload(); }
 let signInCallback = (voters, notice) =>{ updateVoters(voters); updateVoteProgress(notice); }
 let decisionCallback = (voters, notice) =>{ updateVoters(voters); updateVoteProgress(notice); }
-let finishVoteCallback = () => {
-    $('#currentVote').find("*").attr("disabled", "disabled");
+let finishVoteCallback = (currentVote) => {
+    updateCurrentVote(currentVote);
 }
 let closeVoteCallback = () => { updateCurrentVote(undefined); }
 
@@ -150,13 +157,21 @@ let makeDecision = (decision) => {
     });
 }
 
-let updateDecision = (decision) => {
+let updateDecision = (decision, status) => {
+    if(status == 1){
+        $('#decision_1').attr('disabled', 'disabled');
+        $('#decision_-1').attr('disabled', 'disabled');
+        return;
+    }
     if(decision === 1){
         $('#decision_1').attr('disabled', 'disabled');
         $('#decision_-1').addClass('invisible');
     }else if(decision === -1){
         $('#decision_-1').attr('disabled', 'disabled');
         $('#decision_1').addClass('invisible');
+    }else if(decision === '*'){
+        $('#decision_1').addClass('invisible');
+        $('#decision_-1').addClass('invisible');
     }else{
         $('#decision_1').removeAttr('disabled');
         $('#decision_-1').removeAttr('disabled');

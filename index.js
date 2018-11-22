@@ -76,7 +76,7 @@ app.post('/api/vote/vote', jsonParser, (req, res, next) => {
 
 app.post('/api/vote/finish', (req, res, next) => {
     voteService.finishVote();
-    io.emit('finishVote');
+    io.emit('finishVote', voteService.getCurrentVote());
     res.json({
         success: true,
         msg: '本次投票成功结束'
