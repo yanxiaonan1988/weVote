@@ -41,15 +41,19 @@ exports.createVote = async (voteTitle, voteDescription, meetingName, isRecorded,
         }
         await exec(`convert -density 150  -quality 100 ${currentVote.voteFilePath} ${currentVote.votePath}/voteFile.jpg`);
 
-        for(let i = 0; ; i++){
-            let tempFile = `${currentVote.votePath}/voteFile-${i}.jpg`;
-            if(fs.existsSync(tempFile)){
-                currentVote.voteFilePathList.push(`${currentVote.votePath}/${i}/voteFile.jpg`)
-            }else{
-                break;
+
+        if(fs.existsSync(`${currentVote.votePath}/voteFile.jpg`)){
+            currentVote.voteFilePathList.push(`${currentVote.votePath}/voteFile.jpg`);
+        }else{
+            for(let i = 0; ; i++){
+                let tempFile = `${currentVote.votePath}/voteFile-${i}.jpg`;
+                if(fs.existsSync(tempFile)){
+                    currentVote.voteFilePathList.push(`${currentVote.votePath}/${i}/voteFile.jpg`);
+                }else{
+                    break;
+                }
             }
         }
-
         return currentVote;
     }catch(err){
         console.log(err);
